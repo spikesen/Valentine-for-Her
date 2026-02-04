@@ -1,4 +1,5 @@
 // ... existing code ...
+import { useCallback } from 'react';
   // Mini-Game for Day 8 (Valentine's Day)
   const ValentineGame = () => {
     const [launched, setLaunched] = useState(false);

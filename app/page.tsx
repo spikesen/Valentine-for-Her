@@ -22,6 +22,15 @@ export default function Home() {
   const [nextDay, setNextDay] = useState<ValentineDay | null>(null);
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
+  // UI customization state
+  const [heartsEnabled, setHeartsEnabled] = useState(true);
+  const [heartCount, setHeartCount] = useState(40);
+  const [heartSize, setHeartSize] = useState(1);
+  const [heartSpeed, setHeartSpeed] = useState(1);
+  const [cursorTrailEnabled, setCursorTrailEnabled] = useState(true);
+  const [cursorSize, setCursorSize] = useState(1);
 
   useEffect(() => {
     const now = new Date();
@@ -40,8 +49,13 @@ export default function Home() {
 
   return (
     <main className="h-screen w-full bg-[#FFF5F5] text-[#2C2C2C] relative overflow-hidden flex flex-col items-center justify-between py-4 px-4 md:py-8 md:px-6">
-      <CursorTrail />
-      <FloatingHearts />
+      <CursorTrail enabled={cursorTrailEnabled} size={cursorSize} heartBurstOnClick />
+      <FloatingHearts
+        enabled={heartsEnabled}
+        count={heartCount}
+        sizeMultiplier={heartSize}
+        speedMultiplier={heartSpeed}
+      />
 
       {/* Navigation Menu */}
       <div className="fixed top-4 right-4 z-50">
@@ -70,7 +84,10 @@ export default function Home() {
               </Link>
               <button 
                 className="w-full flex items-center gap-2 px-4 py-3 hover:bg-rose-50 text-rose-900 transition-colors border-t border-rose-50"
-                onClick={() => setIsMenuOpen(false)}
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  setIsSettingsOpen(true);
+                }}
               >
                 <SettingsIcon className="w-4 h-4" />
                 <span className="text-xs font-medium">Settings</span>
@@ -196,6 +213,144 @@ export default function Home() {
 
       {/* Background Decoration */}
       <div className="fixed bottom-0 left-0 w-full h-16 bg-gradient-to-t from-rose-100/20 to-transparent pointer-events-none" />
+
+      {/* Settings Panel */}
+      <AnimatePresence>
+        {isSettingsOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-40 flex items-center justify-center bg-black/20 backdrop-blur-[1px]"
+          >
+            <motion.div
+              initial={{ scale: 0.95, y: 10 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.95, y: 10 }}
+              className="w-full max-w-sm mx-4 bg-white/95 rounded-3xl shadow-2xl border border-rose-100 p-5 space-y-4"
+            >
+              <div className="flex items-center justify-between mb-1">
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-[0.2em] text-rose-400">Customize</p>
+                  <h3 className="text-lg font-serif font-bold text-rose-900">Mood & Magic</h3>
+                </div>
+                <button
+                  onClick={() => setIsSettingsOpen(false)}
+                  className="p-1 rounded-full hover:bg-rose-50 text-rose-400 hover:text-rose-600 transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Hearts toggle */}
+              <div className="flex items-center justify-between text-xs">
+                <div>
+                  <p className="font-semibold text-rose-900">Floating hearts</p>
+                  <p className="text-[10px] text-rose-500">Turn the romantic snow on or off.</p>
+                </div>
+                <button
+                  onClick={() => setHeartsEnabled((v) => !v)}
+                  className={`relative w-10 h-5 rounded-full transition-colors ${
+                    heartsEnabled ? 'bg-rose-500' : 'bg-rose-200'
+                  }`}
+                >
+                  <span
+                    className={`absolute top-[3px] w-4 h-4 rounded-full bg-white shadow-sm transition-transform ${
+                      heartsEnabled ? 'translate-x-[18px]' : 'translate-x-[2px]'
+                    }`}
+                  />
+                </button>
+              </div>
+
+              {/* Hearts intensity slider */}
+              <div className="space-y-1">
+                <div className="flex items-center justify-between text-[11px] text-rose-700">
+                  <span className="font-semibold">Heart intensity</span>
+                  <span className="text-rose-400">{heartCount}</span>
+                </div>
+                <input
+                  type="range"
+                  min={10}
+                  max={100}
+                  step={10}
+                  value={heartCount}
+                  onChange={(e) => setHeartCount(Number(e.target.value))}
+                  className="w-full accent-rose-500"
+                />
+              </div>
+
+              {/* Heart size & speed */}
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between text-[11px] text-rose-700">
+                    <span className="font-semibold">Heart size</span>
+                  </div>
+                  <input
+                    type="range"
+                    min={0.6}
+                    max={1.6}
+                    step={0.1}
+                    value={heartSize}
+                    onChange={(e) => setHeartSize(Number(e.target.value))}
+                    className="w-full accent-rose-500"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between text-[11px] text-rose-700">
+                    <span className="font-semibold">Heart speed</span>
+                  </div>
+                  <input
+                    type="range"
+                    min={0.5}
+                    max={1.5}
+                    step={0.1}
+                    value={heartSpeed}
+                    onChange={(e) => setHeartSpeed(Number(e.target.value))}
+                    className="w-full accent-rose-500"
+                  />
+                </div>
+              </div>
+
+              {/* Cursor controls */}
+              <div className="pt-1 border-t border-rose-100/70 space-y-3">
+                <div className="flex items-center justify-between text-xs">
+                  <div>
+                    <p className="font-semibold text-rose-900">Magic cursor</p>
+                    <p className="text-[10px] text-rose-500">Click anywhere to pop little hearts.</p>
+                  </div>
+                  <button
+                    onClick={() => setCursorTrailEnabled((v) => !v)}
+                    className={`relative w-10 h-5 rounded-full transition-colors ${
+                      cursorTrailEnabled ? 'bg-rose-500' : 'bg-rose-200'
+                    }`}
+                  >
+                    <span
+                      className={`absolute top-[3px] w-4 h-4 rounded-full bg-white shadow-sm transition-transform ${
+                        cursorTrailEnabled ? 'translate-x-[18px]' : 'translate-x-[2px]'
+                      }`}
+                    />
+                  </button>
+                </div>
+
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between text-[11px] text-rose-700">
+                    <span className="font-semibold">Cursor size</span>
+                  </div>
+                  <input
+                    type="range"
+                    min={0.7}
+                    max={1.6}
+                    step={0.1}
+                    value={cursorSize}
+                    onChange={(e) => setCursorSize(Number(e.target.value))}
+                    className="w-full accent-rose-500"
+                  />
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </main>
   );
 }
