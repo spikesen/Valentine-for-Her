@@ -23,6 +23,7 @@ export default function Home() {
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   // UI customization state
   const [heartsEnabled, setHeartsEnabled] = useState(true);
@@ -33,6 +34,19 @@ export default function Home() {
   const [cursorSize, setCursorSize] = useState(1);
 
   useEffect(() => {
+    // Check if valentine was accepted
+    const accepted = localStorage.getItem('valentineAccepted');
+    if (!accepted) {
+      // Redirect to valentine page
+      router.push('/valentine');
+      return;
+    }
+    setIsLoading(false);
+  }, [router]);
+
+  useEffect(() => {
+    if (isLoading) return;
+
     const now = new Date();
     const found = VALENTINE_DAYS.find(day => {
       const dayDate = new Date(day.date);
@@ -43,12 +57,20 @@ export default function Home() {
     
     const dayDate = new Date(found.date);
     setIsUnlocked(isAfter(now, dayDate));
-  }, [progress.completedDays]);
+  }, [progress.completedDays, isLoading]);
 
-  if (!nextDay) return null;
+  if (isLoading || !nextDay) {
+    return (
+      <main className="min-h-screen w-full bg-[#FFF5F5] flex items-center justify-center">
+        <motion.div animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 2, repeat: Infinity }}>
+          <Heart className="w-16 h-16 text-rose-600 fill-rose-600" />
+        </motion.div>
+      </main>
+    );
+  }
 
   return (
-    <main className="h-screen w-full bg-[#FFF5F5] text-[#2C2C2C] relative overflow-hidden flex flex-col items-center justify-between py-4 px-4 md:py-8 md:px-6">
+    <main className="min-h-screen w-full bg-[#FFF5F5] text-[#2C2C2C] relative flex flex-col items-center py-4 px-4 md:py-8 md:px-6 gap-4 md:gap-6 overflow-y-auto">
       <CursorTrail enabled={cursorTrailEnabled} size={cursorSize} heartBurstOnClick />
       <FloatingHearts
         enabled={heartsEnabled}
@@ -101,7 +123,7 @@ export default function Home() {
       <motion.div
         initial={{ y: -10, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="z-10 text-center shrink-0"
+        className="z-10 text-center w-full"
       >
         <div className="relative inline-block mb-2">
           <motion.div
@@ -131,7 +153,7 @@ export default function Home() {
       </motion.div>
 
       {/* Mini Album Section */}
-      <div className="z-10 w-full max-w-xl shrink-0">
+      <div className="z-10 w-full max-w-xl">
         <MiniAlbum />
       </div>
 
@@ -139,7 +161,7 @@ export default function Home() {
       <motion.div
         initial={{ scale: 0.98, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        className="z-10 w-full max-w-lg bg-white/60 backdrop-blur-2xl border border-white/80 rounded-[2rem] p-6 md:p-8 shadow-[0_15px_30px_-10px_rgba(220,20,60,0.1)] text-center relative overflow-hidden flex-1 flex flex-col justify-center max-h-[40vh]"
+        className="z-10 w-full max-w-lg bg-white/60 backdrop-blur-2xl border border-white/80 rounded-[2rem] p-6 md:p-8 shadow-[0_15px_30px_-10px_rgba(220,20,60,0.1)] text-center relative overflow-hidden"
       >
         <div className="relative z-10">
           <div className="mb-4">
@@ -183,7 +205,7 @@ export default function Home() {
       </motion.div>
 
       {/* Love Notes Section */}
-      <div className="z-10 shrink-0">
+      <div className="z-10 w-full">
         <LoveNotes />
       </div>
 
@@ -192,7 +214,7 @@ export default function Home() {
         initial={{ y: 10, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.5 }}
-        className="z-10 flex flex-col items-center shrink-0"
+        className="z-10 flex flex-col items-center w-full mb-4"
       >
         <div className="flex gap-6 mb-2">
           <div className="text-center">

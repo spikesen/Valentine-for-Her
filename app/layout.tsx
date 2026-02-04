@@ -17,6 +17,7 @@ const outfit = Outfit({
 export const metadata: Metadata = {
   title: "Our Valentine's Journey",
   description: "A 14-day journey of love and surprises.",
+  viewport: "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no",
 };
 
 export default function RootLayout({
@@ -27,7 +28,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${cormorant.variable} ${outfit.variable} font-sans antialiased`}
+        className={`${cormorant.variable} ${outfit.variable} font-sans antialiased overflow-x-hidden`}
       >
         {children}
       </body>

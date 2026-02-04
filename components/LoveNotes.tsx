@@ -18,20 +18,20 @@ export const LoveNotes = () => {
   const [currentNote, setCurrentNote] = useState(0);
 
   return (
-    <div className="mt-12 text-center max-w-md mx-auto px-6">
+    <div className="w-full text-center max-w-md mx-auto px-4 py-6">
       <div className="inline-flex items-center gap-2 text-rose-400 mb-4">
-        <Sparkles className="w-4 h-4" />
+        <Sparkles className="w-4 h-4 flex-shrink-0" />
         <span className="text-[10px] font-black uppercase tracking-[0.3em]">Daily Sweetness</span>
       </div>
       
-      <div className="relative h-24 flex items-center justify-center">
+      <div className="relative min-h-24 flex items-center justify-center">
         <AnimatePresence mode="wait">
           <motion.p
             key={currentNote}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="text-lg font-serif italic text-rose-800/80 leading-relaxed"
+            className="text-base md:text-lg font-serif italic text-rose-800/80 leading-relaxed px-2"
           >
             "{NOTES[currentNote]}"
           </motion.p>

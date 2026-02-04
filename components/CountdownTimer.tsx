@@ -12,6 +12,7 @@ interface CountdownTimerProps {
 export const CountdownTimer = ({ targetDate, onUnlock }: CountdownTimerProps) => {
   const [duration, setDuration] = useState<Duration | null>(null);
   const [isUnlocked, setIsUnlocked] = useState(false);
+  const [prevDuration, setPrevDuration] = useState<Duration | null>(null);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -23,41 +24,49 @@ export const CountdownTimer = ({ targetDate, onUnlock }: CountdownTimerProps) =>
         clearInterval(timer);
       } else {
         const d = intervalToDuration({ start: now, end: targetDate });
+        setPrevDuration(duration);
         setDuration(d);
       }
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [targetDate, onUnlock]);
+  }, [targetDate, onUnlock, duration]);
 
   if (isUnlocked) return null;
 
-  const Digit = ({ value }: { value: string }) => (
-    <div className="relative w-7 h-12 md:w-10 md:h-16 flex items-center justify-center overflow-hidden">
-      <AnimatePresence mode="popLayout">
-        <motion.span
-          key={value}
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: -20, opacity: 0 }}
-          transition={{ duration: 0.4, ease: "backOut" }}
-          className="absolute text-3xl md:text-5xl font-bold text-rose-600 font-mono"
-        >
-          {value}
-        </motion.span>
-      </AnimatePresence>
-    </div>
-  );
-
-  const TimeUnit = ({ value, label }: { value: number | undefined; label: string }) => {
-    const stringValue = String(value || 0).padStart(2, '0');
+  const Digit = ({ value, prevValue }: { value: string; prevValue?: string }) => {
+    const isChanged = value !== prevValue;
+    
     return (
-      <div className="flex flex-col items-center mx-1 md:mx-3">
-        <div className="flex bg-white/20 backdrop-blur-lg border border-white/30 rounded-xl px-2 shadow-inner">
-          <Digit value={stringValue[0]} />
-          <Digit value={stringValue[1]} />
+      <div className="relative w-4 h-8 md:w-8 md:h-14 flex items-center justify-center overflow-hidden">
+        <AnimatePresence mode="wait">
+          <motion.span
+            key={value}
+            initial={isChanged ? { y: 24, opacity: 0, rotateX: 90 } : { y: 0, opacity: 1, rotateX: 0 }}
+            animate={{ y: 0, opacity: 1, rotateX: 0 }}
+            exit={isChanged ? { y: -24, opacity: 0, rotateX: -90 } : { y: 0, opacity: 1, rotateX: 0 }}
+            transition={{ duration: isChanged ? 0.5 : 0, ease: "easeInOut" }}
+            className="absolute text-lg md:text-4xl font-bold text-rose-600 font-mono"
+            style={{ perspective: 1000 }}
+          >
+            {value}
+          </motion.span>
+        </AnimatePresence>
+      </div>
+    );
+  };
+
+  const TimeUnit = ({ value, prevValue, label }: { value: number | undefined; prevValue: number | undefined; label: string }) => {
+    const stringValue = String(value || 0).padStart(2, '0');
+    const prevStringValue = String(prevValue || 0).padStart(2, '0');
+    
+    return (
+      <div className="flex items-center gap-0.5 md:gap-1">
+        <div className="flex bg-white/20 backdrop-blur-lg border border-white/30 rounded-xl px-1 md:px-2 shadow-inner">
+          <Digit value={stringValue[0]} prevValue={prevStringValue[0]} />
+          <Digit value={stringValue[1]} prevValue={prevStringValue[1]} />
         </div>
-        <span className="text-[9px] md:text-[10px] uppercase tracking-[0.2em] mt-2 text-rose-800/60 font-bold">
+        <span className="text-[6px] md:text-[8px] uppercase tracking-[0.15em] text-rose-800/60 font-bold whitespace-nowrap">
           {label}
         </span>
       </div>
@@ -65,14 +74,14 @@ export const CountdownTimer = ({ targetDate, onUnlock }: CountdownTimerProps) =>
   };
 
   return (
-    <div className="flex items-center justify-center py-6">
-      <TimeUnit value={duration?.days} label="Days" />
-      <div className="text-rose-300 font-bold text-2xl mb-6">:</div>
-      <TimeUnit value={duration?.hours} label="Hours" />
-      <div className="text-rose-300 font-bold text-2xl mb-6">:</div>
-      <TimeUnit value={duration?.minutes} label="Mins" />
-      <div className="text-rose-300 font-bold text-2xl mb-6">:</div>
-      <TimeUnit value={duration?.seconds} label="Secs" />
+    <div className="flex items-center justify-center gap-0.5 md:gap-1.5 py-3 md:py-4 overflow-x-auto">
+      <TimeUnit value={duration?.days} prevValue={prevDuration?.days} label="D" />
+      <div className="text-rose-300 font-bold text-sm md:text-lg flex-shrink-0">:</div>
+      <TimeUnit value={duration?.hours} prevValue={prevDuration?.hours} label="H" />
+      <div className="text-rose-300 font-bold text-sm md:text-lg flex-shrink-0">:</div>
+      <TimeUnit value={duration?.minutes} prevValue={prevDuration?.minutes} label="M" />
+      <div className="text-rose-300 font-bold text-sm md:text-lg flex-shrink-0">:</div>
+      <TimeUnit value={duration?.seconds} prevValue={prevDuration?.seconds} label="S" />
     </div>
   );
 };
