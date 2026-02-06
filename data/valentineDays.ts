@@ -22,7 +22,7 @@ export interface ValentineDay {
 export const VALENTINE_DAYS: ValentineDay[] = [
   { 
     id: 1, 
-    slug: 'rose-day', 
+    slug: 'rose-day-x7k9m', 
     date: '2026-02-07', 
     name: 'Rose Day', 
     emoji: '🌹', 
@@ -34,7 +34,7 @@ export const VALENTINE_DAYS: ValentineDay[] = [
   },
   { 
     id: 2, 
-    slug: 'propose-day', 
+    slug: 'propose-day-q4r8n', 
     date: '2026-02-08', 
     name: 'Propose Day', 
     emoji: '💍', 
@@ -46,7 +46,7 @@ export const VALENTINE_DAYS: ValentineDay[] = [
   },
   { 
     id: 3, 
-    slug: 'chocolate-day', 
+    slug: 'chocolate-day-p2v5f', 
     date: '2026-02-09', 
     name: 'Chocolate Day', 
     emoji: '🍫', 
@@ -58,7 +58,7 @@ export const VALENTINE_DAYS: ValentineDay[] = [
   },
   { 
     id: 4, 
-    slug: 'teddy-day', 
+    slug: 'teddy-day-j6w3t', 
     date: '2026-02-10', 
     name: 'Teddy Day', 
     emoji: '🧸', 
@@ -70,7 +70,7 @@ export const VALENTINE_DAYS: ValentineDay[] = [
   },
   { 
     id: 5, 
-    slug: 'promise-day', 
+    slug: 'promise-day-b8h1d', 
     date: '2026-02-11', 
     name: 'Promise Day', 
     emoji: '🤝', 
@@ -82,7 +82,7 @@ export const VALENTINE_DAYS: ValentineDay[] = [
   },
   { 
     id: 6, 
-    slug: 'hug-day', 
+    slug: 'hug-day-l9c4s', 
     date: '2026-02-12', 
     name: 'Hug Day', 
     emoji: '🫂', 
@@ -94,7 +94,7 @@ export const VALENTINE_DAYS: ValentineDay[] = [
   },
   { 
     id: 7, 
-    slug: 'kiss-day', 
+    slug: 'kiss-day-z3m7e', 
     date: '2026-02-13', 
     name: 'Kiss Day', 
     emoji: '💋', 
@@ -106,7 +106,7 @@ export const VALENTINE_DAYS: ValentineDay[] = [
   },
   { 
     id: 8, 
-    slug: 'valentines-day', 
+    slug: 'valentines-day-n5r2g', 
     date: '2026-02-14', 
     name: "Valentine's Day", 
     emoji: '💝', 
@@ -118,7 +118,7 @@ export const VALENTINE_DAYS: ValentineDay[] = [
   },
   { 
     id: 9, 
-    slug: 'slap-day', 
+    slug: 'slap-day-k1y9p', 
     date: '2026-02-15', 
     name: 'Slap Day', 
     emoji: '✋', 
@@ -130,7 +130,7 @@ export const VALENTINE_DAYS: ValentineDay[] = [
   },
   { 
     id: 10, 
-    slug: 'kick-day', 
+    slug: 'kick-day-a8w6b', 
     date: '2026-02-16', 
     name: 'Kick Day', 
     emoji: '🦶', 
@@ -142,7 +142,7 @@ export const VALENTINE_DAYS: ValentineDay[] = [
   },
   { 
     id: 11, 
-    slug: 'perfume-day', 
+    slug: 'perfume-day-f4d7o', 
     date: '2026-02-17', 
     name: 'Perfume Day', 
     emoji: '💨', 
@@ -154,7 +154,7 @@ export const VALENTINE_DAYS: ValentineDay[] = [
   },
   { 
     id: 12, 
-    slug: 'flirting-day', 
+    slug: 'flirting-day-u2i8x', 
     date: '2026-02-18', 
     name: 'Flirting Day', 
     emoji: '😏', 
@@ -166,7 +166,7 @@ export const VALENTINE_DAYS: ValentineDay[] = [
   },
   { 
     id: 13, 
-    slug: 'confession-day', 
+    slug: 'confession-day-e6t3c', 
     date: '2026-02-19', 
     name: 'Confession Day', 
     emoji: '🗣️', 
@@ -178,7 +178,7 @@ export const VALENTINE_DAYS: ValentineDay[] = [
   },
   { 
     id: 14, 
-    slug: 'missing-day', 
+    slug: 'missing-day-h5n1s', 
     date: '2026-02-20', 
     name: 'Missing Day', 
     emoji: '🥺', 

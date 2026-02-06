@@ -15,6 +15,8 @@ import { MiniAlbum } from '@/components/MiniAlbum';
 import { LoveNotes } from '@/components/LoveNotes';
 import { AchievementBadge } from '@/components/AchievementBadge';
 import { useProgress } from '@/hooks/useProgress';
+import { parseFinlandDate } from '@/lib/utils';
+import { NoteForm } from '@/components/NoteForm';
 
 export default function Home() {
   const router = useRouter();
@@ -49,13 +51,13 @@ export default function Home() {
 
     const now = new Date();
     const found = VALENTINE_DAYS.find(day => {
-      const dayDate = new Date(day.date);
+      const dayDate = parseFinlandDate(day.date);
       return !progress.completedDays.includes(day.id) || !isAfter(now, dayDate);
     }) || VALENTINE_DAYS[VALENTINE_DAYS.length - 1];
 
     setNextDay(found);
     
-    const dayDate = new Date(found.date);
+    const dayDate = parseFinlandDate(found.date);
     setIsUnlocked(isAfter(now, dayDate));
   }, [progress.completedDays, isLoading]);
 
@@ -103,6 +105,14 @@ export default function Home() {
               >
                 <ImageIcon className="w-4 h-4" />
                 <span className="text-xs font-medium">Gallery</span>
+              </Link>
+              <Link 
+                href="/notes" 
+                className="flex items-center gap-2 px-4 py-3 hover:bg-rose-50 text-rose-900 transition-colors border-t border-rose-50"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <span className="text-lg">📖</span>
+                <span className="text-xs font-medium">Notes</span>
               </Link>
               <button 
                 className="w-full flex items-center gap-2 px-4 py-3 hover:bg-rose-50 text-rose-900 transition-colors border-t border-rose-50"
@@ -172,10 +182,23 @@ export default function Home() {
             </h2>
             
             {!isUnlocked ? (
-              <CountdownTimer 
-                targetDate={new Date(nextDay.date)} 
-                onUnlock={() => setIsUnlocked(true)} 
-              />
+              <>
+                <CountdownTimer 
+                  targetDate={parseFinlandDate(nextDay.date)} 
+                  onUnlock={() => setIsUnlocked(true)} 
+                />
+
+                {/* Pre-day note form (before the day opens) */}
+                {nextDay && (
+                  <div className="mt-4">
+                    <NoteForm
+                      dayId={nextDay.id}
+                      noteType="before"
+                      placeholder={`Share your thoughts before ${nextDay.name}...`}
+                    />
+                  </div>
+                )}
+              </>
             ) : (
               <div className="py-2">
                 <UnlockButton 

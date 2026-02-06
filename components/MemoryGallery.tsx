@@ -5,6 +5,7 @@ import { useProgress } from '@/hooks/useProgress';
 import { VALENTINE_DAYS } from '@/data/valentineDays';
 import { Heart, Calendar, Image as ImageIcon } from 'lucide-react';
 import Link from 'next/link';
+import { parseFinlandDate } from '@/lib/utils';
 
 export const MemoryGallery = () => {
   const { progress } = useProgress();
@@ -59,7 +60,7 @@ export const MemoryGallery = () => {
               </p>
               <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-tighter text-rose-400">
                 <Calendar className="w-3 h-3" />
-                <span>{new Date(day.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}</span>
+                <span>{parseFinlandDate(day.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}</span>
               </div>
             </div>
           </Link>
