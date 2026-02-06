@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNotes } from '@/hooks/useNotes';
 import { MessageSquare, Loader } from 'lucide-react';
@@ -25,17 +25,17 @@ export const NotesViewer = ({ dayId, dayName }: NotesViewerProps) => {
   const { fetchNotes, loading, error } = useNotes();
   const [selectedTab, setSelectedTab] = useState<'before' | 'after'>('before');
 
+  const loadNotes = useCallback(async () => {
+    const data = await fetchNotes(dayId);
+    if (data) {
+      setNotes(data);
+    }
+  }, [dayId, fetchNotes]);
+
   useEffect(() => {
     if (dayId == null) return;
-
-    const loadNotes = async () => {
-      const data = await fetchNotes(dayId);
-      if (data) {
-        setNotes(data);
-      }
-    };
     loadNotes();
-  }, [dayId, fetchNotes]);
+  }, [dayId, loadNotes]);
 
   const filteredNotes = notes.filter((note) => note.note_type === selectedTab);
   const beforeNotes = notes.filter((note) => note.note_type === 'before');

@@ -4,26 +4,26 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Volume2, VolumeX } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { useDayGate } from '@/hooks/useDayGate';
 import { useProgress } from '@/hooks/useProgress';
 import { celebrateDay } from '@/hooks/useCelebrate';
 import SaveToast from '@/components/SaveToast';
 import confetti from 'canvas-confetti';
+import { ParticleField } from '@/components/ParticleField';
 
-const ParticleField = () => {
+const ParticleField_Old = () => {
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden">
       {[...Array(25)].map((_, i) => (
         <motion.div
           key={i}
           initial={{
-            x: Math.random() * window.innerWidth,
-            y: Math.random() * window.innerHeight,
+            x: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 1000),
+            y: Math.random() * (typeof window !== 'undefined' ? window.innerHeight : 1000),
             opacity: 0,
           }}
           animate={{
-            x: Math.random() * window.innerWidth,
-            y: Math.random() * window.innerHeight,
+            x: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 1000),
+            y: Math.random() * (typeof window !== 'undefined' ? window.innerHeight : 1000),
             opacity: [0, 1, 0],
           }}
           transition={{

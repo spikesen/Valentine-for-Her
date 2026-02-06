@@ -15,11 +15,11 @@ const ParticleField = () => {
       {[...Array(30)].map((_, i) => (
         <motion.div
           key={i}
-          initial={{ opacity: 0, y: -100, x: Math.random() * window.innerWidth }}
+          initial={{ opacity: 0, y: -100, x: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 1000) }}
           animate={{
             opacity: [0, 0.5, 0],
-            y: window.innerHeight,
-            x: Math.random() * window.innerWidth,
+            y: typeof window !== 'undefined' ? window.innerHeight : 1000,
+            x: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 1000),
           }}
           transition={{
             duration: 8 + Math.random() * 4,
