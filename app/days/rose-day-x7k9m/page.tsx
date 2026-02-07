@@ -59,101 +59,33 @@ const AnimatedBackground = () => {
   );
 };
 
-// Premium Rose Component with Enhanced Animation
+// Static Flower Element (no rotation) - more realistic, varied flowers
 const PremiumRose = ({ index, isNewRose, onClick }: { index: number; isNewRose: boolean; onClick: () => void }) => {
-  const angle = (index / 10) * 360;
-  const radius = 140;
-  const x = Math.cos((angle * Math.PI) / 180) * radius;
-  const y = Math.sin((angle * Math.PI) / 180) * radius;
+  // variety of flower emojis to simulate a mixed bouquet
+  const variants = ['🌹', '🌷', '🌸', '🌺', '🌼', '💐', '🌻', '🥀'];
+  const flower = variants[index % variants.length];
+  // spread flowers across wider concentric rings for a fuller bouquet
+  const angle = (index / 20) * Math.PI * 2;
+  const radius = 110 + (index % 8) * 16;
+  const x = Math.cos(angle) * radius;
+  const y = Math.sin(angle) * radius;
 
   return (
     <motion.div
-      initial={isNewRose ? { scale: 0, opacity: 0, rotate: -180, filter: 'blur(10px)' } : { scale: 0, opacity: 0, rotate: -180 }}
-      animate={{ scale: 1, opacity: 1, rotate: 0, filter: 'blur(0px)' }}
-      transition={
-        isNewRose
-          ? {
-              type: 'spring',
-              stiffness: 100,
-              damping: 12,
-              mass: 1.5,
-              delay: 0.1,
-            }
-          : {
-              delay: index * 0.12,
-              type: 'spring',
-              stiffness: 150,
-              damping: 15,
-            }
-      }
+      initial={isNewRose ? { scale: 0, opacity: 0 } : { scale: 0.8, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      transition={isNewRose ? { type: 'spring', stiffness: 120, damping: 14 } : { delay: index * 0.05 }}
       onClick={onClick}
-      className="absolute cursor-pointer group"
+      className="absolute cursor-default select-none"
       style={{ left: `calc(50% + ${x}px)`, top: `calc(50% + ${y}px)` }}
-      whileHover={{ scale: 1.35, filter: 'drop-shadow(0 0 30px rgba(220, 20, 60, 0.8))' }}
-      whileTap={{ scale: 0.7 }}
     >
-      {/* Bloom glow effect for new roses */}
       {isNewRose && (
-        <motion.div
-          initial={{ scale: 0.5, opacity: 1 }}
-          animate={{ scale: 2.5, opacity: 0 }}
-          transition={{ duration: 0.8, ease: 'easeOut' }}
-          className="absolute inset-0 bg-gradient-to-r from-rose-400 to-pink-400 rounded-full blur-2xl -z-10"
-          style={{ width: '100%', height: '100%' }}
-        />
+        <motion.div initial={{ scale: 0.6, opacity: 0.9 }} animate={{ scale: 1.8, opacity: 0 }} transition={{ duration: 0.8 }} className="absolute -z-10 rounded-full bg-rose-200/40" style={{ width: 60, height: 60 }} />
       )}
 
-      {/* Particle burst for new roses */}
-      {isNewRose && (
-        <>
-          {[...Array(8)].map((_, i) => {
-            const burstAngle = (i / 8) * 360 * (Math.PI / 180);
-            const burstDistance = 60;
-            const bx = Math.cos(burstAngle) * burstDistance;
-            const by = Math.sin(burstAngle) * burstDistance;
-
-            return (
-              <motion.div
-                key={`burst-${i}`}
-                initial={{ x: 0, y: 0, opacity: 1, scale: 1 }}
-                animate={{ x: bx, y: by, opacity: 0, scale: 0 }}
-                transition={{ duration: 0.8, ease: 'easeOut', delay: 0 }}
-                className="absolute text-2xl pointer-events-none"
-                style={{ left: '-50%', top: '-50%' }}
-              >
-                ✨
-              </motion.div>
-            );
-          })}
-        </>
-      )}
-
-      {/* Main rose with enhanced rotation */}
-      <motion.div
-        animate={{ rotate: 360, y: [0, -10, 0] }}
-        transition={{ rotate: { duration: 20, repeat: Infinity, ease: 'linear' }, y: { duration: 3, repeat: Infinity } }}
-        className="text-6xl filter drop-shadow-2xl origin-center"
-      >
-        🌹
-      </motion.div>
-
-      {/* Number badge with enhanced animation */}
-      <motion.div
-        initial={isNewRose ? { opacity: 0, scale: 0 } : { opacity: 0, scale: 0 }}
-        whileHover={isNewRose ? { opacity: 1, scale: 1 } : undefined}
-        animate={isNewRose ? { opacity: [0, 1, 0.8] } : undefined}
-        transition={isNewRose ? { delay: 0.3, duration: 0.5 } : undefined}
-        className="absolute -top-10 -left-8 w-16 h-16 bg-gradient-to-br from-white to-rose-50 backdrop-blur-md rounded-full flex items-center justify-center text-xs font-black text-transparent bg-clip-text bg-gradient-to-r from-rose-600 to-pink-500 shadow-xl border-2 border-rose-200"
-      >
-        #{index + 1}
-      </motion.div>
-
-      {/* Glow ring effect on hover */}
-      <motion.div
-        animate={{ scale: 1, opacity: 0 }}
-        whileHover={{ scale: 1.8, opacity: 0.3 }}
-        className="absolute inset-0 border-2 border-rose-400 rounded-full -z-10 blur-sm"
-      />
+      <div className="text-4xl" style={{ transform: 'translate(-50%, -50%)' }}>
+        {flower}
+      </div>
     </motion.div>
   );
 };
@@ -265,14 +197,14 @@ const PremiumCard = ({ emoji, title, description, delay }: any) => {
 };
 
 export default function RoseDayPage() {
-  const [roseCount, setRoseCount] = useState(0);
-  const [showBouquet, setShowBouquet] = useState(false);
+  const [roseCount, setRoseCount] = useState(40);
+  const [showBouquet, setShowBouquet] = useState(true);
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);
-  const [currentPhase, setCurrentPhase] = useState<'intro' | 'bloom' | 'bouquet' | 'finale'>('intro');
+  const [currentPhase, setCurrentPhase] = useState<'intro' | 'bloom' | 'bouquet' | 'finale'>('bouquet');
   const [lastAddedRose, setLastAddedRose] = useState<number | null>(null);
   const [showNotesSection, setShowNotesSection] = useState(false);
 
-  const maxRoses = 10;
+  const maxRoses = 40;
 
   const handleRoseGenerate = () => {
     if (roseCount < maxRoses) {
@@ -319,10 +251,10 @@ export default function RoseDayPage() {
   };
 
   useEffect(() => {
-    if (roseCount > 0) {
+    if (roseCount > 0 && !showBouquet) {
       setCurrentPhase('bloom');
     }
-  }, [roseCount]);
+  }, [roseCount, showBouquet]);
 
   return (
     <main className="min-h-screen w-full bg-gradient-to-br from-rose-50 via-pink-50 to-red-50 text-rose-900 relative overflow-hidden">
@@ -414,7 +346,7 @@ export default function RoseDayPage() {
               className="w-full flex flex-col items-center gap-12"
             >
               {/* Rose Circle */}
-              <motion.div initial={{ scale: 0.8 }} animate={{ scale: 1 }} className="relative w-full max-w-lg h-96">
+              <motion.div initial={{ scale: 0.8 }} animate={{ scale: 1 }} className="relative w-full max-w-3xl h-[30rem]">
                 {/* Center glow */}
                 <motion.div
                   animate={{ scale: [1, 1.1, 1], opacity: [0.5, 0.8, 0.5] }}
@@ -442,7 +374,7 @@ export default function RoseDayPage() {
                   transition={{ duration: 2, repeat: Infinity }}
                   className="absolute inset-0 flex flex-col items-center justify-center"
                 >
-                  <motion.div className="text-7xl mb-4">💕</motion.div>
+                  <motion.div className="text-8xl mb-4">💕</motion.div>
                   <p className="text-2xl font-bold text-rose-600">
                     {roseCount}
                     <span className="text-rose-400">/{maxRoses}</span>
@@ -451,28 +383,7 @@ export default function RoseDayPage() {
                 </motion.div>
               </motion.div>
 
-              {/* Action buttons */}
-              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex gap-4 flex-wrap justify-center">
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={handleRoseGenerate}
-                  disabled={roseCount >= maxRoses}
-                  className="px-10 py-4 bg-gradient-to-r from-rose-600 to-pink-500 text-white rounded-full font-bold shadow-xl hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-                >
-                  🌹 Bloom a Rose
-                </motion.button>
-                {roseCount < maxRoses && roseCount > 0 && (
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={completeBouquet}
-                    className="px-10 py-4 bg-white border-2 border-rose-600 text-rose-600 rounded-full font-bold shadow-xl hover:shadow-2xl transition-all"
-                  >
-                    ✨ Complete Bouquet
-                  </motion.button>
-                )}
-              </motion.div>
+              {/* Action buttons intentionally removed to show bouquet directly */}
             </motion.div>
           )}
 
@@ -486,7 +397,7 @@ export default function RoseDayPage() {
             >
               {/* Premium Bouquet */}
               <motion.div animate={{ y: [-8, 8, -8] }} transition={{ duration: 4, repeat: Infinity }} className="w-full flex justify-center">
-                <div className="relative w-80 h-96">
+                <div className="relative w-[34rem] h-[40rem]">
                   {/* Background glow */}
                   <motion.div
                     animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }}
@@ -494,62 +405,120 @@ export default function RoseDayPage() {
                     className="absolute inset-0 bg-gradient-to-t from-rose-400/40 to-transparent rounded-full blur-3xl"
                   />
 
-                  {/* SVG Bouquet */}
-                  <svg viewBox="0 0 200 400" className="w-full h-full relative z-10 drop-shadow-2xl">
-                    {/* Stems */}
-                    <motion.g
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ staggerChildren: 0.1 }}
-                    >
-                      {[...Array(3)].map((_, i) => (
-                        <motion.path
-                          key={`stem-${i}`}
-                          d={`M ${100 + i * 8 - 8} 150 Q ${100 + i * 8 - 8 + (i - 1) * 5} 220 ${90 + i * 8} 360`}
-                          stroke="#2d5016"
-                          strokeWidth="4"
-                          fill="none"
-                          animate={{ pathLength: [0, 1] }}
-                          transition={{ duration: 2, delay: i * 0.1 }}
-                        />
-                      ))}
-                    </motion.g>
+                  {/* SVG Bouquet with lush blooms and elegant base */}
+                  <svg viewBox="0 0 300 520" className="w-full h-full relative z-10 drop-shadow-2xl">
+                    <defs>
+                      <linearGradient id="wrapGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stopColor="#ffd1dc" />
+                        <stop offset="50%" stopColor="#ff9bb5" />
+                        <stop offset="100%" stopColor="#e75480" />
+                      </linearGradient>
+                    </defs>
 
-                    {/* Roses in bouquet */}
-                    {[...Array(10)].map((_, i) => {
-                      const angle = (i / 10) * 360 * (Math.PI / 180);
-                      const radius = 50;
-                      const x = 100 + Math.cos(angle) * radius;
-                      const y = 100 + Math.sin(angle) * radius;
+                    {/* Bouquet wrap / base */}
+                    <path
+                      d="M70 210 L230 210 L150 390 Z"
+                      fill="url(#wrapGradient)"
+                      opacity="0.92"
+                      stroke="#c2185b"
+                      strokeWidth="3.5"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M70 210 Q150 250 230 210"
+                      fill="none"
+                      stroke="#ffe4ec"
+                      strokeWidth="5"
+                      strokeLinecap="round"
+                    />
+                    {/* Ribbon band and bow */}
+                    <path
+                      d="M95 250 L205 250 Q215 262 205 274 L95 274 Q85 262 95 250 Z"
+                      fill="#ffeff7"
+                      stroke="#c2185b"
+                      strokeWidth="2.5"
+                      opacity="0.97"
+                    />
+                    <path
+                      d="M150 248 Q168 260 150 272 Q132 260 150 248 Z"
+                      fill="#ffb6c1"
+                      stroke="#c2185b"
+                      strokeWidth="2"
+                    />
+                    <path
+                      d="M150 274 L138 302"
+                      stroke="#c2185b"
+                      strokeWidth="3"
+                      strokeLinecap="round"
+                    />
+                    <path
+                      d="M150 274 L162 302"
+                      stroke="#c2185b"
+                      strokeWidth="3"
+                      strokeLinecap="round"
+                    />
+                    {/* Ribbon tails */}
+                    <path
+                      d="M115 274 Q112 310 125 340"
+                      stroke="#ffb6c1"
+                      strokeWidth="6"
+                      strokeLinecap="round"
+                      opacity="0.9"
+                    />
+                    <path
+                      d="M185 274 Q188 310 175 340"
+                      stroke="#ffb6c1"
+                      strokeWidth="6"
+                      strokeLinecap="round"
+                      opacity="0.9"
+                    />
 
-                      return (
-                        <motion.g
-                          key={i}
-                          initial={{ opacity: 0, scale: 0 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          transition={{ delay: 0.5 + i * 0.08, type: 'spring', stiffness: 200 }}
-                        >
-                          <motion.text
+                    {/* Compact circular flower cluster centered at (150,155) */}
+                    {(() => {
+                      // Lush bouquet: 40 flowers across four generous layers
+                      const variants = ['🌹', '🌷', '🌸', '🌺', '🌼', '🌻'];
+                      // evenly spaced flowers per ring for clean circular look
+                      const layers = [
+                        { count: 12, radius: 36, size: 56, offset: 0 },
+                        { count: 12, radius: 62, size: 52, offset: Math.PI / 12 },
+                        { count: 10, radius: 88, size: 48, offset: Math.PI / 10 },
+                        { count: 6, radius: 115, size: 46, offset: Math.PI / 6 },
+                      ];
+                      const center = { x: 150, y: 155 };
+                      const items: Array<any> = [];
+
+                      layers.forEach((layer, layerIndex) => {
+                        for (let j = 0; j < layer.count; j++) {
+                          const i = layerIndex * layer.count + j;
+                          const angle = (j / layer.count) * Math.PI * 2 + layer.offset;
+                          const cx = center.x + Math.cos(angle) * layer.radius;
+                          const cy = center.y + Math.sin(angle) * layer.radius;
+                          const emoji = variants[i % variants.length];
+                          const size = layer.size + (j % 2 === 0 ? 2 : 0);
+                          items.push({ x: cx, y: cy, emoji, key: i, size });
+                        }
+                      });
+
+                      return items.map(({ x, y, emoji, key, size }) => (
+                        <g key={key}>
+                          <text
                             x={x}
                             y={y}
-                            fontSize="28"
+                            fontSize={size}
                             textAnchor="middle"
-                            animate={{ rotate: 360 }}
-                            transition={{ duration: 20 + i, repeat: Infinity, ease: 'linear' }}
+                            dominantBaseline="middle"
+                            alignmentBaseline="middle"
                           >
-                            🌹
-                          </motion.text>
-                        </motion.g>
-                      );
-                    })}
+                            {emoji}
+                          </text>
+                        </g>
+                      ));
+                    })()}
                   </svg>
                 </div>
               </motion.div>
 
-              {/* Ribbon */}
-              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1 }}>
-                <LuxuryRibbon />
-              </motion.div>
+              {/* Ribbon removed per request (kept minimal bouquet presentation) */}
 
               {/* Message Section */}
               <motion.div
@@ -560,7 +529,7 @@ export default function RoseDayPage() {
               >
                 <h2 className="text-5xl font-serif font-bold text-rose-900">Your Perfect Bouquet</h2>
                 <p className="text-xl text-rose-700/80 leading-relaxed">
-                  Just like these 10 beautiful roses, there are countless reasons why you mean the world to me.
+                  Just like these 40 beautiful blooms, there are countless reasons why you mean the world to me.
                   Each petal represents a moment, each bloom represents a memory, and together they symbolize
                   the beautiful journey we're creating together.
                 </p>
@@ -652,18 +621,6 @@ export default function RoseDayPage() {
                   <Sparkles size={20} />
                   Celebrate Love 🎉
                 </motion.button>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => {
-                    setRoseCount(0);
-                    setShowBouquet(false);
-                    setCurrentPhase('bloom');
-                  }}
-                  className="px-10 py-4 bg-white border-2 border-rose-600 text-rose-600 rounded-full font-bold shadow-xl hover:shadow-2xl transition-all"
-                >
-                  🔄 Bloom Again
-                </motion.button>
               </motion.div>
             </motion.div>
           )}
@@ -684,35 +641,31 @@ export default function RoseDayPage() {
         )}
       </AnimatePresence>
 
-      {/* Note Form - Before Day Unlocks */}
-      {currentPhase === 'intro' && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="relative z-10 w-full max-w-2xl mx-auto mb-12 px-4"
-        >
-          <div className="bg-white/60 backdrop-blur-lg rounded-2xl border border-rose-100 p-6 shadow-lg">
-            <h3 className="text-lg font-bold text-gray-800 mb-4">✨ Before We Begin</h3>
-            <p className="text-sm text-gray-600 mb-4">What are your thoughts before experiencing Rose Day?</p>
-            <NoteForm dayId={1} noteType="before" placeholder="Share your expectations, hopes, or excitement..." />
-          </div>
-        </motion.div>
-      )}
+      {/* Note Form - Before Day */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="relative z-10 w-full max-w-2xl mx-auto mb-6 px-4"
+      >
+        <div className="bg-white/60 backdrop-blur-lg rounded-2xl border border-rose-100 p-6 shadow-lg">
+          <h3 className="text-lg font-bold text-gray-800 mb-4">✨ Before We Begin</h3>
+          <p className="text-sm text-gray-600 mb-4">What are your thoughts before experiencing Rose Day?</p>
+          <NoteForm dayId={1} noteType="before" placeholder="Share your expectations, hopes, or excitement..." />
+        </div>
+      </motion.div>
 
       {/* Note Form - After Day Experience */}
-      {currentPhase === 'bouquet' && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="relative z-10 w-full max-w-2xl mx-auto mb-12 px-4"
-        >
-          <div className="bg-white/60 backdrop-blur-lg rounded-2xl border border-rose-100 p-6 shadow-lg">
-            <h3 className="text-lg font-bold text-gray-800 mb-4">💭 After the Experience</h3>
-            <p className="text-sm text-gray-600 mb-4">How did you feel? Share your thoughts and memories...</p>
-            <NoteForm dayId={1} noteType="after" placeholder="Reflect on your experience, what moved you the most, favorite moments..." />
-          </div>
-        </motion.div>
-      )}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="relative z-10 w-full max-w-2xl mx-auto mb-12 px-4"
+      >
+        <div className="bg-white/60 backdrop-blur-lg rounded-2xl border border-rose-100 p-6 shadow-lg">
+          <h3 className="text-lg font-bold text-gray-800 mb-4">💭 After the Experience</h3>
+          <p className="text-sm text-gray-600 mb-4">How did you feel? Share your thoughts and memories...</p>
+          <NoteForm dayId={1} noteType="after" placeholder="Reflect on your experience, what moved you the most, favorite moments..." />
+        </div>
+      </motion.div>
 
       {/* View Notes Button */}
       <motion.button
@@ -744,4 +697,3 @@ export default function RoseDayPage() {
     </main>
   );
 }
-

@@ -29,9 +29,9 @@ export default function NotesPage() {
         className="text-center mb-4"
       >
         <h1 className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-rose-600 to-pink-500 mb-2">
-          Our Love Notes
+          Memories
         </h1>
-        <p className="text-gray-600 text-lg">Every thought, every reflection, every moment cherished</p>
+        <p className="text-gray-600 text-lg">Private memories (accessible via URL)</p>
       </motion.div>
 
       {/* Back Button */}

@@ -22,6 +22,7 @@ export default function Home() {
   const router = useRouter();
   const { progress } = useProgress();
   const [nextDay, setNextDay] = useState<ValentineDay | null>(null);
+  const [nextTimerDay, setNextTimerDay] = useState<ValentineDay | null>(null);
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -58,7 +59,18 @@ export default function Home() {
     setNextDay(found);
     
     const dayDate = parseFinlandDate(found.date);
-    setIsUnlocked(isAfter(now, dayDate));
+    const unlocked = isAfter(now, dayDate);
+    setIsUnlocked(unlocked);
+
+    // If the currently selected day is already unlocked, show a timer
+    // for the next upcoming day instead so users can see the next unlock.
+    if (unlocked) {
+      const idx = VALENTINE_DAYS.findIndex(d => d.id === found.id);
+      const upcoming = VALENTINE_DAYS[idx + 1] ?? null;
+      setNextTimerDay(upcoming);
+    } else {
+      setNextTimerDay(null);
+    }
   }, [progress.completedDays, isLoading]);
 
   if (isLoading || !nextDay) {
@@ -70,6 +82,9 @@ export default function Home() {
       </main>
     );
   }
+
+  // Choose which day to preview in the "Coming Next" section:
+  const previewDay = isUnlocked && nextTimerDay ? nextTimerDay : nextDay;
 
   return (
     <main className="min-h-screen w-full bg-[#FFF5F5] text-[#2C2C2C] relative flex flex-col items-center py-4 px-4 md:py-8 md:px-6 gap-4 md:gap-6 overflow-y-auto">
@@ -106,12 +121,12 @@ export default function Home() {
                 <ImageIcon className="w-4 h-4" />
                 <span className="text-xs font-medium">Gallery</span>
               </Link>
-              <Link 
-                href="/notes" 
+              <Link
+                href="/notes"
                 className="flex items-center gap-2 px-4 py-3 hover:bg-rose-50 text-rose-900 transition-colors border-t border-rose-50"
                 onClick={() => setIsMenuOpen(false)}
               >
-                <span className="text-lg">📖</span>
+                <Heart className="w-4 h-4" />
                 <span className="text-xs font-medium">Notes</span>
               </Link>
               <button 
@@ -183,9 +198,9 @@ export default function Home() {
             
             {!isUnlocked ? (
               <>
-                <CountdownTimer 
-                  targetDate={parseFinlandDate(nextDay.date)} 
-                  onUnlock={() => setIsUnlocked(true)} 
+                <CountdownTimer
+                  targetDate={parseFinlandDate(nextDay.date)}
+                  onUnlock={() => setIsUnlocked(true)}
                 />
 
                 {/* Pre-day note form (before the day opens) */}
@@ -205,24 +220,67 @@ export default function Home() {
                   label={`Unlock ${nextDay.name}`} 
                   onClick={() => router.push(`/days/${nextDay.slug}`)} 
                 />
+                {nextTimerDay && (
+                  <div className="mt-3">
+                    <p className="text-xs text-rose-600 mb-1">Next unlocks in</p>
+                    <CountdownTimer targetDate={parseFinlandDate(nextTimerDay.date)} />
+                  </div>
+                )}
               </div>
             )}
           </div>
 
           {/* Mystery Preview */}
           <div className="relative group border-t border-rose-100/50 pt-4">
-            <div className="flex items-center justify-center gap-3 mb-2">
+                <div className="flex items-center justify-center gap-3 mb-2">
               <div className="w-10 h-10 rounded-lg bg-white shadow-sm flex items-center justify-center text-rose-400 border border-rose-50 shrink-0">
                 {isUnlocked ? <CheckCircle2 className="w-5 h-5 text-green-500" /> : <Lock className="w-5 h-5" />}
               </div>
               <div className="text-left">
                 <p className="text-[7px] font-black text-rose-400 uppercase tracking-[0.2em]">Coming Next</p>
-                <p className="text-lg font-serif font-bold text-rose-900 leading-tight">{nextDay.name}</p>
+                <p className="text-lg font-serif font-bold text-rose-900 leading-tight">{previewDay?.name}</p>
               </div>
             </div>
             <p className="text-rose-700/70 italic text-xs font-serif line-clamp-1">
-              "{nextDay.hint}"
+              "{previewDay?.hint}"
             </p>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Quick Notes for Today */}
+      <motion.div
+        initial={{ scale: 0.98, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ delay: 0.1 }}
+        className="z-10 w-full max-w-xl bg-white/70 backdrop-blur-xl border border-white/80 rounded-[1.75rem] p-5 shadow-[0_15px_30px_-10px_rgba(220,20,60,0.1)] space-y-5"
+      >
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-rose-50 border border-rose-100 flex items-center justify-center text-rose-600">
+            <Sparkles className="w-5 h-5" />
+          </div>
+          <div>
+            <p className="text-xs uppercase tracking-[0.2em] text-rose-400 font-black">Share a note</p>
+            <h3 className="text-lg font-serif font-bold text-rose-900">For {nextDay.name}</h3>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="bg-white/80 border border-rose-100 rounded-xl p-3 shadow-sm">
+            <p className="text-xs font-semibold text-rose-500 mb-1">Before you open</p>
+            <NoteForm
+              dayId={nextDay.id}
+              noteType="before"
+              placeholder={`What are you feeling before ${nextDay.name}?`}
+            />
+          </div>
+          <div className="bg-white/80 border border-rose-100 rounded-xl p-3 shadow-sm">
+            <p className="text-xs font-semibold text-rose-500 mb-1">After you experience it</p>
+            <NoteForm
+              dayId={nextDay.id}
+              noteType="after"
+              placeholder={`How did ${nextDay.name} make you feel?`}
+            />
           </div>
         </div>
       </motion.div>
