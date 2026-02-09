@@ -6,6 +6,7 @@ import { ArrowRight, Volume2, VolumeX } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 import { useProgress } from '@/hooks/useProgress';
+import { useDayGate } from '@/hooks/useDayGate';
 import { celebrateDay } from '@/hooks/useCelebrate';
 import SaveToast from '@/components/SaveToast';
 import confetti from 'canvas-confetti';
@@ -52,6 +53,7 @@ const AnimatedBackground = () => (
 );
 
 export default function ConfessionDayPage() {
+  useDayGate(13);
   const [confessionIdx, setConfessionIdx] = useState(0);
   const [userConfession, setUserConfession] = useState('');
   const [currentPhase, setCurrentPhase] = useState<'intro' | 'confess' | 'finale'>('intro');

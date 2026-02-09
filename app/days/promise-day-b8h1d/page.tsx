@@ -6,6 +6,7 @@ import { ArrowRight, Volume2, VolumeX } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 import { useProgress } from '@/hooks/useProgress';
+import { useDayGate } from '@/hooks/useDayGate';
 import { celebrateDay } from '@/hooks/useCelebrate';
 import SaveToast from '@/components/SaveToast';
 import confetti from 'canvas-confetti';
@@ -79,6 +80,7 @@ const defaultPromises = [
 ];
 
 export default function PromiseDayPage() {
+  useDayGate(5);
   const [promises, setPromises] = useState<string[]>([]);
   const [newPromise, setNewPromise] = useState('');
   const [currentPhase, setCurrentPhase] = useState<'intro' | 'jar' | 'finale'>('intro');

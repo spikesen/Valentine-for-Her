@@ -20,13 +20,18 @@ import { NoteForm } from '@/components/NoteForm';
 
 export default function Home() {
   const router = useRouter();
-  const { progress } = useProgress();
+  const { progress, isLoaded } = useProgress();
   const [nextDay, setNextDay] = useState<ValentineDay | null>(null);
   const [nextTimerDay, setNextTimerDay] = useState<ValentineDay | null>(null);
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Debug: log progress changes
+  useEffect(() => {
+    console.log('Progress updated on home page:', progress);
+  }, [progress]);
 
   // UI customization state
   const [heartsEnabled, setHeartsEnabled] = useState(true);
@@ -51,10 +56,24 @@ export default function Home() {
     if (isLoading) return;
 
     const now = new Date();
-    const found = VALENTINE_DAYS.find(day => {
+    // Find the current or next day: first day where now is within that day
+    let found = null;
+    for (const day of VALENTINE_DAYS) {
       const dayDate = parseFinlandDate(day.date);
-      return !progress.completedDays.includes(day.id) || !isAfter(now, dayDate);
-    }) || VALENTINE_DAYS[VALENTINE_DAYS.length - 1];
+      const nextDayStart = new Date(dayDate);
+      nextDayStart.setDate(nextDayStart.getDate() + 1);
+      
+      // If now is before the next day starts, this day is current or upcoming
+      if (now < nextDayStart) {
+        found = day;
+        break;
+      }
+    }
+    
+    // Fallback to last day if all are passed
+    if (!found) {
+      found = VALENTINE_DAYS[VALENTINE_DAYS.length - 1];
+    }
 
     setNextDay(found);
     
@@ -120,14 +139,6 @@ export default function Home() {
               >
                 <ImageIcon className="w-4 h-4" />
                 <span className="text-xs font-medium">Gallery</span>
-              </Link>
-              <Link
-                href="/notes"
-                className="flex items-center gap-2 px-4 py-3 hover:bg-rose-50 text-rose-900 transition-colors border-t border-rose-50"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <Heart className="w-4 h-4" />
-                <span className="text-xs font-medium">Notes</span>
               </Link>
               <button 
                 className="w-full flex items-center gap-2 px-4 py-3 hover:bg-rose-50 text-rose-900 transition-colors border-t border-rose-50"
@@ -199,6 +210,7 @@ export default function Home() {
             {!isUnlocked ? (
               <>
                 <CountdownTimer
+                  key={`timer-${nextDay.id}`}
                   targetDate={parseFinlandDate(nextDay.date)}
                   onUnlock={() => setIsUnlocked(true)}
                 />
@@ -215,15 +227,15 @@ export default function Home() {
                 )}
               </>
             ) : (
-              <div className="py-2">
+              <div className="py-2 flex flex-col items-center gap-3">
                 <UnlockButton 
                   label={`Unlock ${nextDay.name}`} 
                   onClick={() => router.push(`/days/${nextDay.slug}`)} 
                 />
                 {nextTimerDay && (
-                  <div className="mt-3">
+                  <div className="mt-3 text-center">
                     <p className="text-xs text-rose-600 mb-1">Next unlocks in</p>
-                    <CountdownTimer targetDate={parseFinlandDate(nextTimerDay.date)} />
+                    <CountdownTimer key={`timer-${nextTimerDay.id}`} targetDate={parseFinlandDate(nextTimerDay.date)} />
                   </div>
                 )}
               </div>
@@ -265,23 +277,13 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-white/80 border border-rose-100 rounded-xl p-3 shadow-sm">
-            <p className="text-xs font-semibold text-rose-500 mb-1">Before you open</p>
-            <NoteForm
-              dayId={nextDay.id}
-              noteType="before"
-              placeholder={`What are you feeling before ${nextDay.name}?`}
-            />
-          </div>
-          <div className="bg-white/80 border border-rose-100 rounded-xl p-3 shadow-sm">
-            <p className="text-xs font-semibold text-rose-500 mb-1">After you experience it</p>
-            <NoteForm
-              dayId={nextDay.id}
-              noteType="after"
-              placeholder={`How did ${nextDay.name} make you feel?`}
-            />
-          </div>
+        <div className="bg-white/80 border border-rose-100 rounded-xl p-3 shadow-sm">
+          <p className="text-xs font-semibold text-rose-500 mb-2">Your thoughts</p>
+          <NoteForm
+            dayId={nextDay.id}
+            noteType="before"
+            placeholder={`Share your thoughts about ${nextDay.name}...`}
+          />
         </div>
       </motion.div>
 
@@ -307,6 +309,13 @@ export default function Home() {
             <p className="text-[7px] uppercase tracking-widest text-rose-500 font-bold">Hearts</p>
           </div>
         </div>
+
+        <button
+          onClick={() => window.location.reload()}
+          className="mb-3 px-3 py-1 text-[10px] font-semibold text-rose-600 hover:text-rose-700 bg-white/50 hover:bg-white/80 rounded-full transition-colors"
+        >
+          Refresh
+        </button>
 
         <AchievementBadge 
           completedCount={progress.completedDays.length} 

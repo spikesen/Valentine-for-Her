@@ -6,6 +6,7 @@ import { ArrowRight, Volume2, VolumeX } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 import { useProgress } from '@/hooks/useProgress';
+import { useDayGate } from '@/hooks/useDayGate';
 import { celebrateDay } from '@/hooks/useCelebrate';
 import SaveToast from '@/components/SaveToast';
 import confetti from 'canvas-confetti';
@@ -89,6 +90,7 @@ const chocolates = [
 ];
 
 export default function ChocolateDayPage() {
+  useDayGate(3);
   const [selectedChocolates, setSelectedChocolates] = useState<number[]>([]);
   const [currentPhase, setCurrentPhase] = useState<'intro' | 'select' | 'finale'>('intro');
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);

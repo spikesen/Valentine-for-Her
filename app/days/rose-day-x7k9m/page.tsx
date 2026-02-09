@@ -7,6 +7,7 @@ import Link from 'next/link';
 import confetti from 'canvas-confetti';
 import { NoteForm } from '@/components/NoteForm';
 import { NotesViewer } from '@/components/NotesViewer';
+import { useDayGate } from '@/hooks/useDayGate';
 
 // Particle system for premium feel
 const ParticleField = () => {
@@ -197,6 +198,9 @@ const PremiumCard = ({ emoji, title, description, delay }: any) => {
 };
 
 export default function RoseDayPage() {
+  // Apply access control - redirect if user tries to access before day unlocks
+  useDayGate(1); // Rose Day is day 1
+  
   const [roseCount, setRoseCount] = useState(40);
   const [showBouquet, setShowBouquet] = useState(true);
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);

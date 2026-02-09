@@ -6,6 +6,7 @@ import { ArrowRight, Volume2, VolumeX } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 import { useProgress } from '@/hooks/useProgress';
+import { useDayGate } from '@/hooks/useDayGate';
 import { celebrateDay } from '@/hooks/useCelebrate';
 import SaveToast from '@/components/SaveToast';
 import confetti from 'canvas-confetti';
@@ -51,6 +52,7 @@ const AnimatedBackground = () => (
 );
 
 export default function PerfumeDayPage() {
+  useDayGate(11);
   const [selectedScent, setSelectedScent] = useState<number | null>(null);
   const [currentPhase, setCurrentPhase] = useState<'intro' | 'quiz' | 'finale'>('intro');
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { intervalToDuration, isAfter } from 'date-fns';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -14,23 +14,26 @@ export const CountdownTimer = ({ targetDate, onUnlock }: CountdownTimerProps) =>
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [prevDuration, setPrevDuration] = useState<Duration | null>(null);
 
+  // Memoize the target date to ensure it doesn't cause unnecessary re-renders
+  const memoizedTargetDate = useMemo(() => targetDate, [targetDate.getTime()]);
+
   useEffect(() => {
     const timer = setInterval(() => {
       const now = new Date();
-      if (isAfter(now, targetDate)) {
+      if (isAfter(now, memoizedTargetDate)) {
         setIsUnlocked(true);
         setDuration(null);
         onUnlock?.();
         clearInterval(timer);
       } else {
-        const d = intervalToDuration({ start: now, end: targetDate });
+        const d = intervalToDuration({ start: now, end: memoizedTargetDate });
         setPrevDuration(duration);
         setDuration(d);
       }
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [targetDate, onUnlock, duration]);
+  }, [memoizedTargetDate, onUnlock, duration]);
 
   if (isUnlocked) return null;
 

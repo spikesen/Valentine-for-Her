@@ -84,7 +84,7 @@ export const useNotes = () => {
       }
     })();
 
-    inflight.set(dayId, request);
+    inflight.set(dayId, request as Promise<Note[]>);
     return request;
   }, []);
 

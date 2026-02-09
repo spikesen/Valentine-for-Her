@@ -6,6 +6,7 @@ import { ArrowRight, Volume2, VolumeX } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 import { useProgress } from '@/hooks/useProgress';
+import { useDayGate } from '@/hooks/useDayGate';
 import { celebrateDay } from '@/hooks/useCelebrate';
 import SaveToast from '@/components/SaveToast';
 import confetti from 'canvas-confetti';
@@ -79,6 +80,7 @@ const funnyMemes = [
 ];
 
 export default function SlapDayPage() {
+  useDayGate(9);
   const [slapCount, setSlapCount] = useState(0);
   const [currentPhase, setCurrentPhase] = useState<'intro' | 'slap' | 'finale'>('intro');
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);

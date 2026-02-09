@@ -6,6 +6,7 @@ import { ArrowRight, Volume2, VolumeX } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 import { useProgress } from '@/hooks/useProgress';
+import { useDayGate } from '@/hooks/useDayGate';
 import { celebrateDay } from '@/hooks/useCelebrate';
 import SaveToast from '@/components/SaveToast';
 import confetti from 'canvas-confetti';
@@ -44,6 +45,7 @@ const AnimatedBackground = () => (
 );
 
 export default function KickDayPage() {
+  useDayGate(10);
   const [kickCount, setKickCount] = useState(0);
   const [currentPhase, setCurrentPhase] = useState<'intro' | 'kick' | 'finale'>('intro');
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);

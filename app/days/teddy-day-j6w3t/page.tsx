@@ -6,6 +6,7 @@ import { ArrowRight, Volume2, VolumeX } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 import { useProgress } from '@/hooks/useProgress';
+import { useDayGate } from '@/hooks/useDayGate';
 import { celebrateDay } from '@/hooks/useCelebrate';
 import SaveToast from '@/components/SaveToast';
 import confetti from 'canvas-confetti';
@@ -77,6 +78,7 @@ const outfits = [
 ];
 
 export default function TeddyDayPage() {
+  useDayGate(4);
   const [teddyName, setTeddyName] = useState('');
   const [selectedOutfit, setSelectedOutfit] = useState(0);
   const [currentPhase, setCurrentPhase] = useState<'intro' | 'customize' | 'finale'>('intro');

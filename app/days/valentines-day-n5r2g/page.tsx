@@ -6,7 +6,9 @@ import { ArrowRight, Volume2, VolumeX } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 import { useProgress } from '@/hooks/useProgress';
+import { useDayGate } from '@/hooks/useDayGate';
 import { celebrateDay } from '@/hooks/useCelebrate';
+import { PremiumHeartEffect, SparkleEffect, PremiumConfetti, FloatingHeartOrbit } from '@/components/ValentinePremiumEffects';
 import confetti from 'canvas-confetti';
 
 const ParticleField = () => {
@@ -80,6 +82,7 @@ const memories = [
 ];
 
 export default function ValentinesDayPage() {
+  useDayGate(8);
   const [currentPhase, setCurrentPhase] = useState<'intro' | 'timeline' | 'finale'>('intro');
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);
   const [revealedMemories, setRevealedMemories] = useState(0);
@@ -135,6 +138,9 @@ export default function ValentinesDayPage() {
     <main className="min-h-screen w-full bg-gradient-to-br from-red-50 via-pink-50 to-rose-50 text-red-900 relative overflow-hidden">
       <AnimatedBackground />
       <ParticleField />
+      <PremiumHeartEffect />
+      <SparkleEffect />
+      <PremiumConfetti trigger={currentPhase === 'finale'} />
 
       <header className="sticky top-0 z-40 bg-gradient-to-r from-white/80 via-red-50/50 to-white/80 backdrop-blur-xl border-b-2 border-red-400/50 px-4 py-4 shadow-xl">
         <div className="max-w-6xl mx-auto flex items-center justify-between">

@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
         : supabase;
 
     // Upsert the note (insert or update if already exists)
-    const { data, error } = await writer
+    const { data, error } = await (writer as any)
       .from('day_notes')
       .upsert(
         {
@@ -107,7 +107,7 @@ export async function GET(req: NextRequest) {
         )
       : await createClient();
 
-    const { data, error } = await reader
+    const { data, error } = await (reader as any)
       .from('day_notes')
       .select('*')
       .eq('day_id', parseInt(dayId))
